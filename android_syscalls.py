@@ -6,15 +6,25 @@
 import subprocess
 import pexpect
 import sys,os
+
 #adb="/usr/share/platform-tools/adb"
+
 temp_strace_dir="/sdcard/Download/strace/"
+app="com.android.calculator2"
+
 cmd_get_zygote_pid="adb shell ps | grep zygote | awk '{print $2}'"
 zygote_PID=subprocess.check_output([cmd_get_zygote_pid], shell=True)
+cmd_get_all_pid="adb shell pgrep -P"+zygote_PID
 cmd_get_all_strace="adb shell strace -ff -o"+temp_strace_dir+"output.txt -p"+str(zygote_PID)
-#os.spawnl(os.P_DETACH,cmd_get_all_strace)
+cmd_get_app_pid="adb shell ps | grep "+app+" | awk '{print $2}'"
 subprocess.Popen([cmd_get_all_strace], shell=True)
-print cmd_get_all_strace
-#adb shell monkey -p com.android.calculator2 -c android.intent.category.LAUNCHER 1
+zygote_child_PID=subprocess.check_output([cmd_get_all_pid], shell=True)
+
+print "Number of child process\n"+zygote_child_PID
+
+raw_input("Press any key to start the next? Default["+app+"]")
+os.system("adb shell monkey -p "+app+" -c android.intent.category.LAUNCHER 1")
+
 
 
 
