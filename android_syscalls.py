@@ -12,9 +12,14 @@ from random import randint
 
 #Env setup
 attempt=randint(0,100)
+trace_filter = "trace=fork,clone,execve,chdir,open,creat,close,socket,connect,accept,bind,read,write,unlink,rename,kill,pipe"
 temp_strace_dir="/sdcard/Download/strace/"+str(attempt)+"/"
-app="com.android.calculator2"
-rand_iterations="200"
+#app="com.simplemobiletools.calculator"
+app=sys.argv[1]
+rand_iterations="50"
+
+#Cleaning strace dir
+os.system("adb shell rmdir -rf /sdcard/Download/strace/*")
 
 #Create training directory on Android device
 os.system("adb shell mkdir "+temp_strace_dir)  
@@ -28,6 +33,7 @@ cmd_get_all_pid="adb shell pgrep -P"+zygote_PID
 cmd_get_app_pid="adb shell ps | grep "+app+" | awk '{print $2}'"
 
 #Start zygote's PID strace subprocess in bg which collects and copy its children process in temp_strace_dir 
+#cmd_get_all_strace="adb shell strace -e"+trace_filter+" -ff -o"+temp_strace_dir+"trace -p"+str(zygote_PID)
 cmd_get_all_strace="adb shell strace -ff -o"+temp_strace_dir+"trace -p"+str(zygote_PID)
 proc_strace=subprocess.Popen([cmd_get_all_strace], shell=True)
 
