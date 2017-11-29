@@ -12,14 +12,12 @@ from random import randint
 
 #Env setup
 attempt=randint(0,100)
-trace_filter = "trace=fork,clone,execve,chdir,open,creat,close,socket,connect,accept,bind,read,write,unlink,rename,kill,pipe"
-temp_strace_dir="/sdcard/Download/strace/"+str(attempt)+"/"
-#app="com.simplemobiletools.calculator"
+temp_strace_dir="/system/xbin/strace_dir/"+str(attempt)+"/"
 app=sys.argv[1]
 rand_iterations="50"
 
 #Cleaning strace dir
-os.system("adb shell rmdir -rf /sdcard/Download/strace/*")
+os.system("adb shell 'rm -rf /system/xbin/strace_dir/*'")
 
 #Create training directory on Android device
 os.system("adb shell mkdir "+temp_strace_dir)  
@@ -53,5 +51,20 @@ os.system("adb shell am force-stop "+app)
 proc_strace.kill()
 
 #Pull the trace.app_PID file to the computer and remove temp_strace_dir
-os.system("adb pull "+temp_strace_dir+"trace."+app_PID)
-os.system("adb shell rmdir -r "+temp_strace_dir)
+#os.system("adb pull "+temp_strace_dir+"trace."+app_PID)
+os.system("adb pull "+temp_strace_dir+" reports/")
+
+print "Results are available in reports/"+str(attempt) 
+print "To check reverse_tcp success or attempt, run the following command in the reports/"+str(attempt)+"\n\nif grep -ri Meterpreter ; then echo attack;elif grep -ri 172.16.16.5; then echo Attempt;else echo Legit;fi"
+#check_sig=os.system("if grep -ri Meterpreter reports/"+str(attempt)+" 1>/dev/null; then echo attack;else echo legit;fi")
+#match_sig=subprocess.check_output([check_sig], shell=True)
+#print match_sig
+
+#if match_sig is "attack" or "Meterpreter":
+#	print "Reverse_tcp shell found!!!"
+#	os.system("sleep 3")
+#	os.system("adb shell am force-stop "+app)
+#else:
+#	print legit
+
+os.system("adb shell rm -rf "+temp_strace_dir)
