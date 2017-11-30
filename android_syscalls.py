@@ -4,7 +4,7 @@
 #This program trains and collects the system calls run by a given app by generating random usage
 #
 ##############################################################################################
-
+from match_sig import check_sig
 import subprocess
 import pexpect
 import sys,os
@@ -54,17 +54,10 @@ proc_strace.kill()
 #os.system("adb pull "+temp_strace_dir+"trace."+app_PID)
 os.system("adb pull "+temp_strace_dir+" reports/")
 
-print "Results are available in reports/"+str(attempt) 
-print "To check reverse_tcp success or attempt, run the following command in the reports/"+str(attempt)+"\n\nif grep -ri Meterpreter ; then echo attack;elif grep -ri 172.16.16.5; then echo Attempt;else echo Legit;fi"
-#check_sig=os.system("if grep -ri Meterpreter reports/"+str(attempt)+" 1>/dev/null; then echo attack;else echo legit;fi")
-#match_sig=subprocess.check_output([check_sig], shell=True)
-#print match_sig
-
-#if match_sig is "attack" or "Meterpreter":
-#	print "Reverse_tcp shell found!!!"
-#	os.system("sleep 3")
-#	os.system("adb shell am force-stop "+app)
-#else:
-#	print legit
+status,details=check_sig(attempt)
+print status
+print details
+#print "Results are available in reports/"+str(attempt) 
+#print "To check reverse_tcp success or attempt, run the following command in the reports/"+str(attempt)+"\n\nif grep -ri Meterpreter ; then echo attack;elif grep -ri 172.16.16.5; then echo Attempt;else echo Legit;fi"
 
 os.system("adb shell rm -rf "+temp_strace_dir)
