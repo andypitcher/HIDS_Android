@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 #
-#Andy Pitcher <andy.pitcher@concordia.ca>
+#
 #This program trains and collects the system calls run by a given app by generating random usage
+#It calls match_sig.py afterwhile to match the straces PID and PID children to the signatures 
 #
 ##############################################################################################
 from match_sig import check_sig
@@ -45,19 +46,27 @@ print "Number of child process\n"+zygote_child_PID
 os.system("adb shell monkey --throttle 50 -p "+app+" -c android.intent.category.LAUNCHER "+rand_iterations)
 app_PID=subprocess.check_output([cmd_get_app_pid], shell=True)
 
-#Stop the app
-os.system("adb shell am force-stop "+app)
 #Stop the Zigote strace
 proc_strace.kill()
 
+print "REPORT:\n\n\n\n"
 #Pull the trace.app_PID file to the computer and remove temp_strace_dir
-#os.system("adb pull "+temp_strace_dir+"trace."+app_PID)
 os.system("adb pull "+temp_strace_dir+" reports/")
 
+#Checking signatures matchs and either raise an alert or kill the application
 status,details=check_sig(attempt)
-print status
-print details
-#print "Results are available in reports/"+str(attempt) 
-#print "To check reverse_tcp success or attempt, run the following command in the reports/"+str(attempt)+"\n\nif grep -ri Meterpreter ; then echo attack;elif grep -ri 172.16.16.5; then echo Attempt;else echo Legit;fi"
 
+
+if status == 1:
+	print('\x1b[6;30;41m' +"Logging: Reverse tcp shell detected!!!Killing the app..."+app+ '\x1b[0m')
+        print details
+        #Stop the app
+        os.system("adb shell am force-stop "+app)
+elif status == 2:
+	print('\x1b[6;30;43m'+"Logging: Attempt of external connection"+'\x1b[0m')
+        print details
+else:
+	print('\x1b[6;30;42m' + "Logging: OK" + '\x1b[0m')
+        
+#Flushing the the remote directory 
 os.system("adb shell rm -rf "+temp_strace_dir)

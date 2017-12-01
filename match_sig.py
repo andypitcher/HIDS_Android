@@ -12,14 +12,14 @@ def check_sig(session):
 				status=1
 				details=trace+"\n"+line
 				return status,details
-			elif "172.16.16.5" in line:
+			elif "Connection refused" in line:
 				status=2
 				details=trace+"\n"+line
 				return status,details
 			else:
 				status=0
+				details="Ok"
 				continue
+	return status,details
 
-statusa,detailsa=check_sig(1)
-print str(statusa)+detailsa
 
