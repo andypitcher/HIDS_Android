@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-#
+#Author: andypitcher <andy.pitcher@mail.concordia.ca>
 #This program trains and collects the system calls run by a given app by generating random usage
 #It calls match_sig.py afterwhile to match the straces PID and PID children to the signatures 
 #
