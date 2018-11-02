@@ -3,8 +3,8 @@
 ## Implementation:
 
 The	main	idea	behind	this	implementation	is	a	proof	of	concept	that	takes	two	same	applications,	
-one	legit	and	the other repackaged with a malicious payload (msfvenom). Then,	apply	signature	detection,	basde on	system	calls	to	match	certain	type	of	pattern.	
-Enventually,	this	allows	to	detect	or	prevent	some	attack,	in	our	case,	the	execution	of	
+one	legit	and	the other repackaged with a malicious payload (msfvenom). Then,	apply	signature	detection,	based on	system	calls	to	match	certain	type	of	pattern.	
+Eventually,	this	allows	to	detect	or	prevent	some	attack,	in	our	case,	the	execution	of	
 meterpreter	commands	through	a	reverse_tcp	shell.	
 
 ## Defense environment:
